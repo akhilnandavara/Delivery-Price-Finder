@@ -18,9 +18,9 @@ exports.calculatePricing = async (req, res) => {
 exports.createFoodEntry = async (req, res) => {
   try {
    
-    const { organizationName,zone, items, baseDistancekm, km_price, fix_price } = req.body;
+    const { organizationName,zone, item_type,description, base_distance_in_km, km_price, fix_price } = req.body;
     
-    const response=await createFoodEntry( organizationName,zone, items, baseDistancekm, km_price, fix_price);
+    const response=await createFoodEntry( organizationName,zone, item_type,description, base_distance_in_km, km_price, fix_price);
     if(response.success===true)
     res.status(200).json({ success: true, message: "Data created successfully" })
   else

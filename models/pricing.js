@@ -6,7 +6,7 @@ const Item = require('./item');
 class Pricing extends Model {}
 
 Pricing.init({
-  organizationId: {
+  organization_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -14,7 +14,7 @@ Pricing.init({
       key: 'id',
     },
   },
-  itemId: {
+  item_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -26,15 +26,15 @@ Pricing.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
-  baseDistancekm: {
+  base_distance_in_km: {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
-  kmPrice: {
+  km_price: {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
-  fixPrice: {
+  fix_price: {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
@@ -42,5 +42,10 @@ Pricing.init({
   sequelize,
   modelName: 'Pricing',
 });
+
+Organization.hasMany(Pricing, { foreignKey: 'organization_id' });
+Item.hasMany(Pricing, { foreignKey: 'item_id' });
+Pricing.belongsTo(Organization, { foreignKey: 'organization_id' });
+Pricing.belongsTo(Item, { foreignKey: 'item_id' });
 
 module.exports = Pricing;
