@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
 const sequelize = require('../config/db');
-const { Item } = require('../models/item');
-const { Organization } = require('../models/organization');
-const { Pricing } = require('../models/pricing');
+const Item = require('../models/item');
+const Organization = require('../models/organization');
+const Pricing = require('../models/pricing');
 
 exports.calculatePrice = async (zone, organizationId, total_distance, itemType) => {
   try {
