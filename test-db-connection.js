@@ -1,5 +1,4 @@
-const { Sequelize, DataTypes } = require('sequelize');
-
+const { Sequelize } = require('sequelize');
 
 const sequelize = new Sequelize('postgres://postgres:admin@localhost:5432/food_delivery', {
   dialect: 'postgres',
@@ -16,6 +15,3 @@ async function testConnection() {
   }
 }
 testConnection();
-
-
-

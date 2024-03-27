@@ -13,11 +13,8 @@ exports.calculatePrice = async (zone, organizationId, total_distance, itemType) 
     }
 
     // Validate numeric values
-    if (isNaN(total_distance)) {
-      throw new Error('Invalid distance value');
-    }
-    if (typeof organizationId !== 'string') {
-      throw new Error(`Invalid organization_id  expected String got  ${typeof organizationId}`);
+    if (isNaN(total_distance) || typeof organizationId !== 'string') {
+      throw new Error('Invalid input data');
     }
 
     // Check if the organization exists
@@ -27,11 +24,11 @@ exports.calculatePrice = async (zone, organizationId, total_distance, itemType) 
 
     // Check if the item type is valid
     if (itemType !== 'perishable' && itemType !== 'non-perishable') {
-      return {
-        success: false,
-        error: 'Invalid item type',
-        message: 'Internal server error',
-      };
+      throw new Error('Invalid item type');
+    }
+
+    if (!organization) {
+      throw new Error('Organization not found');
     }
 
     // Fetch the item_id based on the itemType
@@ -39,16 +36,8 @@ exports.calculatePrice = async (zone, organizationId, total_distance, itemType) 
       where: { type: itemType },
     });
 
-    if (!organization) {
-      return {
-        success: false,
-        error: 'Organization not found',
-        message: 'Internal server error',
-      };
-    }
-
     if (!item) {
-      return { success: false, message: 'Item not found' };
+      throw new Error('Item not found');
     }
 
     // Fetch pricing data from the database
@@ -61,26 +50,22 @@ exports.calculatePrice = async (zone, organizationId, total_distance, itemType) 
     });
 
     if (!pricing) {
-      return {
-        success: false,
-        error: 'Pricing data not found for the given parameters',
-        message: 'Internal server error',
-      };
+      throw new Error('Pricing data not found for the given parameters');
     }
 
     const { base_distance_in_km, fix_price, km_price } = pricing;
-    const extraPricePerKm = itemType === 'perishable' ? km_price : 1;// Set km_price based on itemType
+    const extraPricePerKm = itemType === 'perishable' ? km_price : 1;
 
-    let price = fix_price * 100;// Convert fix_price to cents
+    let price = fix_price * 100;
     const extraDistance = total_distance - base_distance_in_km;
 
     if (extraDistance > 0) {
-      price += extraDistance * extraPricePerKm * 100; // Convert km_price to cents
+      price += extraDistance * extraPricePerKm * 100;
     }
 
-    return { success: true, total_price: (price / 100).toFixed(2) }; // Convert back to euros
+    return { success: true, total_price: (price / 100).toFixed(2) };
   } catch (error) {
-    return { success: false, message: 'Internal server error', error: error.message };
+    return { success: false, error: error.message, message: 'Bad request' };
   }
 };
 
@@ -99,18 +84,24 @@ exports.createFoodEntry = async (
     if (!zone
       || !organizationName
       || !itemType
-      || !description
-      || !base_distance_in_km
-      || !km_price
-      || !fix_price) {
+       || !description
+        || !base_distance_in_km
+        || !km_price
+        || !fix_price
+    ) {
       throw new Error('Missing required input data');
     }
-    console.log('Validating input data');
 
     // Validate numeric values
     if (isNaN(base_distance_in_km) || isNaN(km_price) || isNaN(fix_price)) {
       throw new Error('Invalid numeric values');
     }
+
+    // Check if the item type is valid
+    if (itemType !== 'perishable' && itemType !== 'non-perishable') {
+      throw new Error('Invalid item type');
+    }
+
     // Sync all defined models to the database
     await sequelize.sync();
 
@@ -173,25 +164,15 @@ exports.createFoodEntry = async (
     // Commit the transaction
     await transaction.commit();
 
-    console.log('Sample data inserted successfully.');
-
-    // Calculate the total price
-    const totalPrice = await this.calculatePrice(
-      zone,
-      organization.id,
-      base_distance_in_km,
-      itemType,
-    );
-
-    return { success: true, message: 'Sample data inserted successfully', total_price: totalPrice };
+    return { success: true, message: 'Pricing structure created successfully' };
   } catch (error) {
-    console.error('Unable to insert sample data:', error);
+    // console.error('Unable to create a structure:', error);
 
     // Rollback the transaction if it exists and is not yet committed
     if (transaction && transaction.finished !== 'commit') {
       await transaction.rollback();
     }
 
-    return { success: false, message: error.message };
+    return { success: false, error: error.message, message: 'Bad request' };
   }
 };
