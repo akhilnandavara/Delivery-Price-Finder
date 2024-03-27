@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const { calculatePrice } = require('../services/pricingService');
 const { Item } = require('../models/item');
 const { Organization } = require('../models/organization');
@@ -23,7 +24,6 @@ jest.mock('../models/pricing.js', () => ({
 }));
 
 describe('calculatePrice', () => {
-
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -78,8 +78,7 @@ describe('calculatePrice', () => {
   });
 
   it('should return error if total distance is non numeric  value', async () => {
-
-    const result = await calculatePrice('east', '1', "string", 'perishable');
+    const result = await calculatePrice('east', '1', 'string', 'perishable');
     expect(result).toEqual({
       success: false,
       error: 'Invalid distance value',

@@ -41,7 +41,6 @@ Pricing.init({
 }, {
   sequelize,
   modelName: 'Pricing',
-  
 });
 
 Organization.hasMany(Pricing, { foreignKey: 'organization_id' });
