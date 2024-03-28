@@ -12,7 +12,7 @@ exports.calculatePricing = async (req, res) => {
 
     const price = await calculatePrice(zone, organization_id, total_distance, item_type);
     if (price.success === true) res.status(200).json({ total_price: price });
-    else res.status(400).json({ price });
+    else res.status(400).json(price);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
