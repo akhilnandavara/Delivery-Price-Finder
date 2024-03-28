@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
 const sequelize = require('../config/db');
-const Item = require('../models/item');
 const Organization = require('../models/organization');
 const Pricing = require('../models/pricing');
+const Item = require('../models/item');
 
 exports.calculatePrice = async (zone, organizationId, total_distance, itemType) => {
   try {
@@ -14,7 +14,7 @@ exports.calculatePrice = async (zone, organizationId, total_distance, itemType) 
 
     // Validate numeric values
     if (isNaN(total_distance) || typeof organizationId !== 'string') {
-      throw new Error('Invalid input data');
+      throw new Error('Invalid distance value');
     }
 
     // Check if the organization exists

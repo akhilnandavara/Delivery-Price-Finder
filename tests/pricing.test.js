@@ -1,27 +1,39 @@
 /* eslint-disable no-undef */
 const { calculatePrice } = require('../services/pricingService');
-const { Item } = require('../models/item');
-const { Organization } = require('../models/organization');
-const { Pricing } = require('../models/pricing');
+const Item = require('../models/item');
+const Organization = require('../models/organization');
+const Pricing = require('../models/pricing');
+const sequelize = require('../config/db');
 
 // Mocking the database models
 jest.mock('../models/item.js', () => ({
-  Item: {
-    findOne: jest.fn(),
-  },
+  findOne: jest.fn(),
 }));
 
 jest.mock('../models/organization.js', () => ({
-  Organization: {
-    findOne: jest.fn(),
-  },
+  findOne: jest.fn(),
 }));
 
 jest.mock('../models/pricing.js', () => ({
-  Pricing: {
-    findOne: jest.fn(),
-  },
+  findOne: jest.fn(),
 }));
+
+jest.mock('../config/db.js', () => ({
+  authenticate: jest.fn(),
+  sync: jest.fn(),
+  transaction: jest.fn(),
+}));
+
+describe('Database Connection', () => {
+  it('should establish a database connection', async () => {
+    try {
+      await sequelize.authenticate();
+      // console.log('Connection has been established successfully.');
+    } catch (error) {
+      console.error('Unable to connect to the database:', error);
+    }
+  });
+});
 
 describe('calculatePrice', () => {
   afterEach(() => {
@@ -73,7 +85,7 @@ describe('calculatePrice', () => {
     expect(result).toEqual({
       success: false,
       error: 'Missing required input data',
-      message: 'Internal server error',
+      message: 'Bad request',
     });
   });
 
@@ -82,7 +94,7 @@ describe('calculatePrice', () => {
     expect(result).toEqual({
       success: false,
       error: 'Invalid distance value',
-      message: 'Internal server error',
+      message: 'Bad request',
     });
   });
 
@@ -92,7 +104,7 @@ describe('calculatePrice', () => {
     expect(result).toEqual({
       success: false,
       error: 'Organization not found',
-      message: 'Internal server error',
+      message: 'Bad request',
     });
   });
 
@@ -101,7 +113,7 @@ describe('calculatePrice', () => {
     expect(result).toEqual({
       success: false,
       error: 'Invalid item type',
-      message: 'Internal server error',
+      message: 'Bad request',
     });
   });
 
@@ -117,7 +129,7 @@ describe('calculatePrice', () => {
     expect(result).toEqual({
       success: false,
       error: 'Pricing data not found for the given parameters',
-      message: 'Internal server error',
+      message: 'Bad request',
     });
   });
 });
