@@ -39,7 +39,7 @@ exports.createFoodEntry = async (req, res) => {
       fix_price,
     );
     if (response.success === true) res.status(200).json({ success: true, message: 'Pricing structure created successfully', total_price: response.total_price });
-    else res.status(400).json({ success: false, message: response });
+    else res.status(400).json(response);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
