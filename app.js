@@ -22,7 +22,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use('/api/pricing', pricingRoutes);
 
 app.get('/', (req, res) => {
-  res.send('Welcome to the pricing API');
+  res.redirect('/api-docs');
 });
 
 app.listen(PORT, () => {

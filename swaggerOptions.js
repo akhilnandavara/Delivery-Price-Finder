@@ -14,7 +14,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./routes/pricingRoutes.js'],
+  apis: ['./routes/*.js'],
   swaggerOptions: {
     customCss: `
       .swagger-ui .topbar {
