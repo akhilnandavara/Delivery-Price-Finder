@@ -1,6 +1,8 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize('postgres://postgres:admin@localhost:5432/food_delivery', {
+require('dotenv').config();
+
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
   define: {
     timestamps: false, // Disable timestamps
