@@ -1,16 +1,13 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
   logging: false,
   dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false, /* This line allows you to connect to a PostgreSQL
-        database that uses a self-signed certificate.
-       If your PostgreSQL database uses a valid SSL certificate, you should set this to true. */
-    },
+    ssl: isProduction ? { require: true, rejectUnauthorized: false } : false,
   },
 });
 

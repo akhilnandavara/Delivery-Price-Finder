@@ -41,6 +41,7 @@ Pricing.init({
 }, {
   sequelize,
   modelName: 'Pricing',
+  timestamps: false, // Disable createdAt and updatedAt columns
 });
 
 Organization.hasMany(Pricing, { foreignKey: 'organization_id' });

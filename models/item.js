@@ -15,6 +15,7 @@ Item.init({
 }, {
   sequelize,
   modelName: 'Item',
+  timestamps: false, // Disable createdAt and updatedAt columns
 });
 
 module.exports = Item;
