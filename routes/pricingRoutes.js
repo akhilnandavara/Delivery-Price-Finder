@@ -15,9 +15,38 @@ const { calculatePricing, createFoodEntry } = require('../controllers/pricingCon
  * /api/pricing/calculate-price:
  *   post:
  *     summary: Calculate delivery costs based on distance, zone, and item type
- *     description: Calculates the delivery cost based on the
- *                  provided distance, zone, organization, and item type.
+ *     description: Calculates the delivery cost
+ *                  based on the provided distance, zone, organization, and item type.
  *     tags: [Pricing]
+ *     parameters:
+ *       - in: query
+ *         name: zone
+ *         schema:
+ *           type: string
+ *         description: The delivery zone.
+ *         required: true
+ *         default: 'east'
+ *       - in: query
+ *         name: organization_id
+ *         schema:
+ *           type: string
+ *         description: The ID of the organization.
+ *         required: true
+ *         default: '1'
+ *       - in: query
+ *         name: total_distance
+ *         schema:
+ *           type: number
+ *         description: The total distance of the delivery in kilometers.
+ *         required: true
+ *         default: 10
+ *       - in: query
+ *         name: item_type
+ *         schema:
+ *           type: string
+ *         description: The type of the food item ('perishable' or 'non-perishable').
+ *         required: true
+ *         default: 'non-perishable'
  *     requestBody:
  *       required: true
  *       content:
@@ -145,8 +174,6 @@ const { calculatePricing, createFoodEntry } = require('../controllers/pricingCon
  *                     item_type: ""
  */
 
-router.post('/calculate-price', calculatePricing);
-
 /**
  * @swagger
  * /api/pricing/create-entry:
@@ -155,6 +182,56 @@ router.post('/calculate-price', calculatePricing);
  *     description: Allows the creation of a new pricing
  *                 structure for an organization and a food item.
  *     tags: [Pricing]
+ *     parameters:
+ *       - in: query
+ *         name: organizationName
+ *         schema:
+ *           type: string
+ *         description: Name of the organization.
+ *         required: true
+ *         default: 'FoodHut'
+ *       - in: query
+ *         name: zone
+ *         schema:
+ *           type: string
+ *         description: Zone for the pricing structure.
+ *         required: true
+ *         default: 'south'
+ *       - in: query
+ *         name: item_type
+ *         schema:
+ *           type: string
+ *         description: Type of the food item ('perishable' or 'non-perishable').
+ *         required: true
+ *         default: 'perishable'
+ *       - in: query
+ *         name: description
+ *         schema:
+ *           type: string
+ *         description: Description of the food item.
+ *         required: true
+ *         default: 'icecake'
+ *       - in: query
+ *         name: base_distance_in_km
+ *         schema:
+ *           type: number
+ *         description: Base distance for the pricing structure in km.
+ *         required: true
+ *         default: 5
+ *       - in: query
+ *         name: km_price
+ *         schema:
+ *           type: number
+ *         description: Per km price in euros.
+ *         required: true
+ *         default: 1.5
+ *       - in: query
+ *         name: fix_price
+ *         schema:
+ *           type: number
+ *         description: Fixed price in euros.
+ *         required: true
+ *         default: 10
  *     requestBody:
  *       required: true
  *       content:
@@ -294,6 +371,7 @@ router.post('/calculate-price', calculatePricing);
  *                     fix_price: 10
  */
 
+router.post('/calculate-price', calculatePricing);
 router.post('/create-entry', createFoodEntry);
 
 module.exports = router;

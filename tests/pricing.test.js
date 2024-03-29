@@ -24,6 +24,7 @@ jest.mock('../config/db.js', () => ({
   transaction: jest.fn(),
 }));
 
+// Test suite for database connection
 describe('Database Connection', () => {
   it('should establish a database connection', async () => {
     try {
@@ -35,11 +36,13 @@ describe('Database Connection', () => {
   });
 });
 
+// Test suite for calculatePrice function
 describe('calculatePrice', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
+  // Test case: Calculate price for perishable item
   it('should calculate the correct price for perishable item', async () => {
     const mockOrganization = { id: 1 };
     const mockItem = { id: 1 };
@@ -60,6 +63,7 @@ describe('calculatePrice', () => {
     });
   });
 
+  // Test case: Calculate price for non-perishable item
   it('should calculate the correct price for non-perishable item', async () => {
     const mockOrganization = { id: 1 };
     const mockItem = { id: 1 };
@@ -80,6 +84,7 @@ describe('calculatePrice', () => {
     });
   });
 
+  // Test case: Return error if required input data is missing
   it('should return error if required input data is missing', async () => {
     const result = await calculatePrice();
     expect(result).toEqual({
@@ -89,6 +94,7 @@ describe('calculatePrice', () => {
     });
   });
 
+  // Test case: Return error if total distance is non-numeric value
   it('should return error if total distance is non numeric  value', async () => {
     const result = await calculatePrice('east', '1', 'string', 'perishable');
     expect(result).toEqual({
@@ -98,6 +104,7 @@ describe('calculatePrice', () => {
     });
   });
 
+  // Test case: Return error if organization not found
   it('should return error if organization not found', async () => {
     Organization.findOne.mockResolvedValueOnce(null);
     const result = await calculatePrice('east', '005', 12, 'perishable');
@@ -108,6 +115,7 @@ describe('calculatePrice', () => {
     });
   });
 
+  // Test case: Return error if item type is invalid
   it('should return error if item type is invalid', async () => {
     const result = await calculatePrice('east', '1', 12, 'invalidType');
     expect(result).toEqual({
@@ -117,6 +125,7 @@ describe('calculatePrice', () => {
     });
   });
 
+  // Test case: Return error if pricing data not found
   it('should return error if pricing data not found', async () => {
     const mockOrganization = { id: 1 };
     const mockItem = { id: 1 };

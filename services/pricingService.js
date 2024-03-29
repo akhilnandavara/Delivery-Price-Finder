@@ -1,9 +1,20 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
+
 const sequelize = require('../config/db');
 const Organization = require('../models/organization');
 const Pricing = require('../models/pricing');
 const Item = require('../models/item');
+
+/**
+ * Calculate the delivery cost based on the provided parameters.
+ *
+ * @param {string} zone - The delivery zone.
+ * @param {string} organizationId - The ID of the organization.
+ * @param {number} total_distance - The total distance of the delivery in kilometers.
+ * @param {string} itemType - The type of the food item ('perishable' or 'non-perishable').
+ * @returns {Object} - The calculated price or an error message.
+ */
 
 exports.calculatePrice = async (zone, organizationId, total_distance, itemType) => {
   try {
@@ -69,6 +80,18 @@ exports.calculatePrice = async (zone, organizationId, total_distance, itemType) 
   }
 };
 
+/**
+ * Create a new pricing structure for an organization and item.
+ *
+ * @param {string} organizationName - Name of the organization.
+ * @param {string} zone - Zone for the pricing structure.
+ * @param {string} itemType - Type of the food item ('perishable' or 'non-perishable').
+ * @param {string} description - Description of the food item.
+ * @param {number} base_distance_in_km - Base distance for the pricing structure in km.
+ * @param {number} km_price - Per km price in euros.
+ * @param {number} fix_price - Fixed price in euros.
+ * @returns {Object} - Success message or an error message.
+ */
 exports.createFoodEntry = async (
   organizationName,
   zone,
@@ -84,10 +107,10 @@ exports.createFoodEntry = async (
     if (!zone
       || !organizationName
       || !itemType
-       || !description
-        || !base_distance_in_km
-        || !km_price
-        || !fix_price
+      || !description
+      || !base_distance_in_km
+      || !km_price
+      || !fix_price
     ) {
       throw new Error('Missing required input data');
     }
@@ -166,8 +189,6 @@ exports.createFoodEntry = async (
 
     return { success: true, message: 'Pricing structure created successfully' };
   } catch (error) {
-    // console.error('Unable to create a structure:', error);
-
     // Rollback the transaction if it exists and is not yet committed
     if (transaction && transaction.finished !== 'commit') {
       await transaction.rollback();
